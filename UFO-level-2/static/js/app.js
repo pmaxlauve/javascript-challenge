@@ -3,25 +3,31 @@ var tableData = data;
 
 // YOUR CODE HERE!
 
+
+// set up variables
+// tbody to reference HTML location where the table body goes 
 var tbody = d3.select("#init-table");
-
-var tbodyFiltered = d3.select("#filtered-table")
-
+// button to reference HTML location where the button goes
 var button = d3.select("#filter-btn");
-
+// form to reference HTML location where the form goes
 var form = d3.select("#form");
 
- 
+ // create events that activate the runEnter()
 button.on("click", runEnter);
 form.on("submit", runEnter);
 
+//Create funciton to build the table
+function createTable(selectData) {
+    //clear tbody
+    tbody.html("");
 
-function init() {
-    tableData.forEach(function(entry) {
-        console.log(entry);
+    //use another function to build the table
+    selectData.forEach(function(entry) {
+        
+        //append rows based on the length of the dataset
         var row = tbody.append("tr");
+        //assign data to cells
         Object.entries(entry).forEach(function([key, value]) {
-            console.log(key, value);
             var cell = row.append("td");
             cell.text(value);
         });
@@ -30,39 +36,44 @@ function init() {
 };
 
 
+//run the full dataset when page initially loads
+createTable(tableData);
 
 
-init();
-
-function updateTable() {
-    tbody.remove('tr');
-
-    filteredData.forEach(function(entry) {
-        var row = tbodyFiltered.append("tr");
-        Object.entries(entry).forEach(function([key, value]) {
-            console.log(key, value);
-            var cell = row.append("td");
-            cell.text(value);
-        });
-    });  
-    
-};
-
+// create function to filter data when event is triggered
 function runEnter() {
 
     // Prevent the page from refreshing
     d3.event.preventDefault();
     
-    // Select the input element and get the raw HTML node
-    var inputElement = d3.select("#datetime");
-  
-    // Get the value property of the input element
-    var inputValue = inputElement.property("value");
-  
-    console.log(inputValue);
-  
-    filteredData = tableData.filter(sighting => sighting.datetime === inputValue);
-    
-    updateTable();
+    // set up variables for each parameter
+    var inputDate = d3.select("#datetime").property("value");
+    var inputCity = d3.select("#city").property("value");
+    var inputState = d3.select("#state").property("value");
+    var inputCountry = d3.select("#country").property("value");
+    var inputShape = d3.select("#shape").property("value");
+
+    let filteredData = tableData;
+
+    // filter for each varialbe
+    if (inputDate) {
+        filteredData = filteredData.filter(x => x.datetime === inputDate);
+    }
+    if (inputCity) {
+        filteredData = filteredData.filter(x => x.city === inputCity);
+    }
+    if (inputState) {
+        filteredData = filteredData.filter(x => x.state === inputState);
+    }
+    if (inputCountry) {
+        filteredData = filteredData.filter(x => x.country === inputCountry);
+    }
+    if (inputShape) {
+        filteredData = filteredData.filter(x => x.shape === inputShape);
+    }
+
+
+    // rune createTable() with filteredData
+    createTable(filteredData);
 
   };
